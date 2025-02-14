@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note Manager</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h2>Welcome to Note Manager</h2>
+  <button onclick="logout()">Logout</button>
+<br>
+  <a href="search.html">Search</a>
+  <br>
+  <a href="top-users.html">Top Users</a>
+  <h3>Create Note</h3>
+  <form id="noteForm">
+    <label for="noteTitle"></label><input type="text" id="noteTitle" placeholder="Title" required>
+    <label for="noteContent"></label><textarea id="noteContent" placeholder="Content" required></textarea>
+    <button type="submit">Add Note</button>
+  </form>
+
+  <h3>Your Notes</h3>
+  <div id="notesList"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
