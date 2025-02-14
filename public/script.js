@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5001/api";
 
 // Handle login
 document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
@@ -11,8 +11,9 @@ document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
     });
-
+    console.log("Response status:", res.status);
     const data = await res.json();
+    console.log(data);
     if (data.token) {
         localStorage.setItem("token", data.token);
         window.location.href = "dashboard.html";
