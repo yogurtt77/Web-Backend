@@ -14,6 +14,13 @@ exports.register = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: "User already exists" });
         }
+        if (!username || username.length < 3) {
+            return res.status(400).json({ message: "Username must be at least 3 characters long" });
+        }
+        if (!password || password.length < 6) {
+            return res.status(400).json({ message: "Password must be at least 6 characters long" });
+        } // validation of username and password
+
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new User({ username, password: hashedPassword });

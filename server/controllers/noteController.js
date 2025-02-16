@@ -1,7 +1,7 @@
 const Note = require("../models/noteModel");
-const User = require("../models/noteModel");
+const User = require("../models/userModel");
 
-// ✅ Create a Note (Linked to Logged-in User)
+//Create a Note (Linked to Logged-in User)
 exports.createNote = async (req, res) => {
     try {
         const { title, content } = req.body;
@@ -59,6 +59,7 @@ exports.updateNote = async (req, res) => {
         // Update the note
         note.title = title;
         note.content = content;
+        note.updatedAt = new Date(); // updatedAt
         await note.save();
 
         res.json(note);
