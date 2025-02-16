@@ -24,7 +24,7 @@ The project follows the **MVC (Model-View-Controller) architecture** to ensure a
 📌 **View (Frontend)** - HTML & JavaScript used for user interaction.
 📌 **Controller (Express Controllers)** - Handles logic, authentication, and database queries.
 
-Additionally, **RESTful API principles** were followed to make the project scalable and maintainable.
+Additionally, **RESTful API principles** were followed to make the project scalable and maintainable. 
 
 🛠️ **Key Components:**
 - `models/` - MongoDB models for Users & Notes
