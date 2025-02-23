@@ -1,50 +1,50 @@
-const API_URL = "http://localhost:4000/api";
+const API_URL = "http://localhost:5000/api";
 
-// Handle login
-document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value.trim();
-
-    console.log("Login attempt with username:", username, "and password:", password); // Debug log
-
-    const res = await fetch(`${API_URL}/users/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-    });
-    console.log("Response status:", res.status);
-    const data = await res.json();
-    console.log(data);
-    if (data.token) {
-        localStorage.setItem("token", data.token);
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Login failed!");
-    }
-});
-
-// Handle registration
-document.getElementById("registerForm")?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const username = document.getElementById("registerUsername").value;
-    const password = document.getElementById("registerPassword").value;
-
-    const res = await fetch(`${API_URL}/users/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-    });
-
-    if (res.ok) {
-        alert("User registered! Now login.");
-    } else {
-        alert("Registration failed.");
-    }
-});
+// // Handle login
+// document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
+//     e.preventDefault();
+//     const username = document.getElementById("loginUsername").value;
+//     const password = document.getElementById("loginPassword").value.trim();
+//
+//     console.log("Login attempt with username:", username, "and password:", password); // Debug log
+//
+//     const res = await fetch(`${API_URL}/users/login`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ username, password }),
+//     });
+//     console.log("Response status:", res.status);
+//     const data = await res.json();
+//     console.log(data);
+//     if (data.token) {
+//         localStorage.setItem("token", data.token);
+//         window.location.href = "dashboard.html";
+//     } else {
+//         alert("Login failed!");
+//     }
+// });
+//
+// // Handle registration
+// document.getElementById("registerForm")?.addEventListener("submit", async (e) => {
+//     e.preventDefault();
+//     const username = document.getElementById("registerUsername").value;
+//     const password = document.getElementById("registerPassword").value;
+//
+//     const res = await fetch(`${API_URL}/users/register`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ username, password }),
+//     });
+//
+//     if (res.ok) {
+//         alert("User registered! Now login.");
+//     } else {
+//         alert("Registration failed.");
+//     }
+// });
 // Profile
-console.log("Response status:", res.status);
-console.log(data);
+// console.log("Response status:", res.status);
+// console.log(data);
 
 document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem('token');
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     try {
-        const res = await fetch("http://localhost:4000/user/profile", {
+        const res = await fetch("http://localhost:5000/user/profile", {
             method: "GET",
             headers: { "Authorization": token }
         });
@@ -70,11 +70,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         alert("Error loading profile");
     }
 });
-
-function logout() {
-    localStorage.removeItem("token");
-    window.location.href = "index.html";
-}
 
 // Fetch and display notes
 async function loadNotes() {
