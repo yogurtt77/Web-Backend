@@ -105,7 +105,7 @@ JWT_SECRET=your_jwt_secret
 ```bash
 npm start
 ```
-🎉 The server will run on `http://localhost:5001`
+🎉 The server will run on `http://localhost:4000`
 
 ---
 

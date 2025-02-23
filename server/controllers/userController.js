@@ -1,66 +1,84 @@
+require("dotenv").config();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const asyncHandler = require("express-async-handler");
+const Joi = require("joi");
 
-exports.register = async (req, res) => {
+// Schema for validation
+const userSchema = Joi.object({
+    username: Joi.string().min(3).required(),
+    password: Joi.string().min(6).required(),
+});
+
+// Register a new user
+exports.register = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
+    console.log("Register attempt:", username);
 
-    try {
-        if (!username || !password) {
-            return res.status(400).json({ message: "Username and password are required" });
-        }
-
-        const existingUser = await User.findOne({ username });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-        if (!username || username.length < 3) {
-            return res.status(400).json({ message: "Username must be at least 3 characters long" });
-        }
-        if (!password || password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters long" });
-        } // validation of username and password
-
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User({ username, password: hashedPassword });
-
-        await user.save();
-
-        res.status(201).json({ message: "User created successfully" });
-    } catch (err) {
-        console.error("Error in register:", err);
-        res.status(500).json({ message: "Server error" });
+    // Validate input
+    const { error } = userSchema.validate({ username, password });
+    if (error) {
+        console.log("Validation error:", error.details[0].message);
+        return res.status(400).json({ message: error.details[0].message });
     }
-};
 
-exports.login = async (req, res) => {
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+        console.log("User already exists");
+        return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("Hashed password:", hashedPassword); // Debug log
+
+    const user = await User.create({ username, password: hashedPassword });
+
+    res.status(201).json({ message: "User created successfully", user: { id: user._id, username: user.username } });
+});
+
+// Login user
+exports.login = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
+    console.log("Login attempt:", username);
 
-    try {
-        if (!username || !password) {
-            return res.status(400).json({ message: "Username and password are required" });
-        }
-
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(400).json({ message: "Invalid credentials" });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
-        }
-
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-        res.json({ token, user: { id: user._id, username: user.username } });
-    } catch (err) {
-        console.error("Error in login:", err);
-        res.status(500).json({ message: "Server error" });
+    if (!process.env.JWT_SECRET) {
+        console.error("JWT_SECRET is not defined");
+        return res.status(500).json({ message: "Server error: JWT_SECRET is missing" });
     }
+
+    // Validate input
+    const { error } = userSchema.validate({ username, password });
+    if (error) {
+        console.log("Validation error:", error.details[0].message);
+        return res.status(400).json({ message: error.details[0].message });
+    }
+
+    const user = await User.findOne({ username });
+    console.log("User found:", user); // Debug log
+
+    if (!user) {
+        console.log("User not found");
+        return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    console.log("Stored password hash:", user.password);
+    console.log("Password being compared:", password); // Debug log
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log("Password match:", isMatch); // Debug log
+
+    if (!isMatch) {
+        console.log("Incorrect password");
+        return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    console.log("Login successful, token generated");
+
+    res.json({ token, user: { id: user._id, username: user.username } });
+});
+// Global error handler middleware
+exports.errorHandler = (err, req, res, next) => {
+    console.error("Error: ", err);
+    res.status(err.status || 500).json({ message: err.message || "Server error" });
 };
-// Updated console.error
-// Changed new User() to User.create()
-// Changed User.create() to await user.save()
-// Updated username and password to check null

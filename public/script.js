@@ -1,10 +1,12 @@
-const API_URL = "http://localhost:5001/api";
+const API_URL = "http://localhost:4000/api";
 
 // Handle login
 document.getElementById("loginForm")?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const username = document.getElementById("loginUsername").value;
-    const password = document.getElementById("loginPassword").value;
+    const password = document.getElementById("loginPassword").value.trim();
+
+    console.log("Login attempt with username:", username, "and password:", password); // Debug log
 
     const res = await fetch(`${API_URL}/users/login`, {
         method: "POST",
@@ -40,6 +42,39 @@ document.getElementById("registerForm")?.addEventListener("submit", async (e) =>
         alert("Registration failed.");
     }
 });
+// Profile
+console.log("Response status:", res.status);
+console.log(data);
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('You need to login first');
+        window.location.href = "index.html";
+        return;
+    }
+
+    try {
+        const res = await fetch("http://localhost:4000/user/profile", {
+            method: "GET",
+            headers: { "Authorization": token }
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch profile");
+
+        const user = await res.json();
+        document.getElementById("username").textContent = user.username;
+        document.getElementById("bio").textContent = user.bio;
+    } catch (err) {
+        console.error(err);
+        alert("Error loading profile");
+    }
+});
+
+function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
+}
 
 // Fetch and display notes
 async function loadNotes() {
@@ -95,6 +130,7 @@ async function deleteNote(id) {
     });
     loadNotes();
 }
+
 
 // Logout
 function logout() {
