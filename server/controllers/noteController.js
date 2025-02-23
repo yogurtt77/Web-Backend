@@ -89,3 +89,28 @@ exports.deleteNote = async (req, res) => {
         res.status(500).json({ message: "Error deleting note", error: err.message });
     }
 };
+
+// Search notes belonging to the authenticated user
+exports.searchNotes = async (req, res) => {
+    try {
+        const { query } = req.query;
+        const results = await Note.find({ $text: { $search: query } });
+        res.json(results);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Get top users based on the number of notes created
+exports.getTopUsers = async (req, res) => {
+    try {
+        const topUsers = await Note.aggregate([
+            { $group: { _id: "$userId", noteCount: { $sum: 1 } } },
+            { $sort: { noteCount: -1 } },
+            { $limit: 5 }
+        ]);
+        res.json(topUsers);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching top users" });
+    }
+};

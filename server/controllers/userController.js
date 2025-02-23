@@ -29,10 +29,10 @@ exports.register = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Hashed password:", hashedPassword); // Debug log
+    // const hashedPassword = await bcrypt.hash(password, 10);
+    // console.log("Hashed password:", hashedPassword); // Debug log
 
-    const user = await User.create({ username, password: hashedPassword });
+    const user = await User.create({ username, password});
 
     res.status(201).json({ message: "User created successfully", user: { id: user._id, username: user.username } });
 });
