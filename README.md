@@ -115,7 +115,7 @@ PRs are welcome! Feel free to fork the repo and submit improvements. 🚀
 ---
 
 ## 📄 License
-MIT License © 2025 Shadiyar Nassyrkhan.
+MIT License © 2025 Absat Nurlybek
 
 ---
 
